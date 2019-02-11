@@ -8,14 +8,9 @@ AC_PROG_CC
 CPPFLAGS="$CPPFLAGS -Wall `getconf LFS_CFLAGS`"
 LDFLAGS="$LDFLAGS `getconf LFS_LDFLAGS`"
 
-AC_CHECK_LIB([fuse], [fuse_main], , AC_MSG_ERROR([Unable to find libfuse]))
+PKG_CHECK_MODULES([FUSE], [fuse >= 2.5])
 
 AC_HEADER_STDC
-AC_CHECK_HEADER([fuse/fuse.h], , AC_MSG_ERROR([Unable to find fuse.h]))
-AC_PREPROC_IFELSE(
-[#define FUSE_USE_VERSION 25
-#include <fuse.h>]
-, , AC_MSG_ERROR([You need FUSE version 2.5.x]))
 
 AC_C_CONST
 
