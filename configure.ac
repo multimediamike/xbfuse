@@ -1,5 +1,5 @@
 AC_INIT([xbfuse], [1.0], [mike@multimedia.cx])
-AM_INIT_AUTOMAKE([xbfuse], [1.0])
+AM_INIT_AUTOMAKE([1.11])
 AC_CONFIG_HEADER([src/config.h])
 
 AC_PROG_CC
