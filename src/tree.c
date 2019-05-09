@@ -170,6 +170,7 @@ int tree_getattr(const char *path, struct stat *stbuf, struct tree *root,
 			stbuf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
 			stbuf->st_nlink = 1;
 			stbuf->st_size = node->size;
+			stbuf->st_ino = node->offset;
 		}
 
 		// Set all times to the values from PACK file.
