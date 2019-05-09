@@ -1,17 +1,5 @@
 # xbfuse - Use FUSE To Mount (Original) Xbox and Xbox 360 DVD Filesystems
 
-**Note (February, 2018):** The original build instructions below were written circa 2006 and are a bit obsolete. This source code should still compile and run on modern Linux kernels using this process:
-
-1. Be sure to have FUSE libraries installed (as of Ubuntu 16.04, this package is 'libfuse-dev')
-2. Clone this repository
-3. Execute the following build command:
- 
- ```gcc -D_FILE_OFFSET_BITS=64 -Wall src/main.c src/tree.c src/xdvdfs.c -o xbfuse -lfuse```
-
-This will build the binary executable ```xbfs```. Use the *Usage* section below for instructions on running this utility.
-
----
-
 xbfuse is a program that allows you to mount the filesystem of a 
 Microsoft Xbox or Xbox 360 DVD as a read-only part of the Linux 
 filesystem. This allows the user to browse the directory structure and 
