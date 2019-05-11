@@ -75,6 +75,11 @@ struct tree {
 	off_t size;
 
 	/*!
+	 * \brief Timestamp (actually pertains to overall fs image).
+	 */
+	time_t timestamp;
+
+	/*!
 	 * \brief Number of subdirectories.
 	 *
 	 * This is used to calculate correct number of hard links,
@@ -120,7 +125,7 @@ struct tree {
  * tree node correspoding to given \c path.
  */
 void tree_insert(struct tree *root, const char *path, int length,
-		 off_t offset, long size);
+		 off_t offset, long size, time_t timestamp);
 
 /*!
  * \brief Find given path in GRAF directory structure.

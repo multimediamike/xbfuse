@@ -25,7 +25,7 @@
 #include "tree.h"
 
 void tree_insert(struct tree *root, const char *path, int length,
-		 off_t offset, long size)
+		 off_t offset, long size, time_t timestamp)
 {
 	char *pos;
 	struct tree *node;
@@ -43,7 +43,7 @@ void tree_insert(struct tree *root, const char *path, int length,
 			if (!strcmp(node->name, path)) {
 				tree_insert(node, pos + 1,
 					    length - (pos + 1 - path),
-					    offset, size);
+					    offset, size, timestamp);
 				return;
 			}
 			node = node->next;
@@ -55,6 +55,7 @@ void tree_insert(struct tree *root, const char *path, int length,
 		node->is_dir = 1;
 		node->offset = 0;
 		node->size = 0;
+		node->timestamp = timestamp;
 		node->nsubdirs = 0;
 		node->sub = NULL;
 		node->next = root->sub;
@@ -65,7 +66,7 @@ void tree_insert(struct tree *root, const char *path, int length,
 
 		// Insert remaining parts of path in new directory.
 		tree_insert(node, pos + 1, length - (pos + 1 - path),
-			    offset, size);
+			    offset, size, timestamp);
 	} else {
 		// No more directories in path. Just create new file
 		// under current directory.
@@ -74,6 +75,7 @@ void tree_insert(struct tree *root, const char *path, int length,
 		node->is_dir = 0;
 		node->offset = offset;
 		node->size = size;
+		node->timestamp = timestamp;
 		node->nsubdirs = 0;
 		node->sub = NULL;
 		node->next = root->sub;
@@ -150,7 +152,6 @@ int tree_getattr(const char *path, struct stat *stbuf, struct tree *root,
 		 int fd)
 {
 	struct tree *node;
-	struct stat st;
 
 	node = tree_find_entry(root, path);
 	if (node) {
@@ -173,11 +174,10 @@ int tree_getattr(const char *path, struct stat *stbuf, struct tree *root,
 			stbuf->st_ino = node->offset;
 		}
 
-		// Set all times to the values from PACK file.
-		fstat(fd, &st);
-		stbuf->st_atime = st.st_atime;
-		stbuf->st_mtime = st.st_mtime;
-		stbuf->st_ctime = st.st_ctime;
+		stbuf->st_atime = node->timestamp;
+		stbuf->st_mtime = node->timestamp;
+		stbuf->st_ctime = node->timestamp;
+
 		return 0;
 	} else
 		return -ENOENT;

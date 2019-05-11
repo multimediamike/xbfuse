@@ -33,9 +33,13 @@
 #define NAME_MAX_SIZE 1024
 #define XDVD_SIGNATURE "MICROSOFT*XBOX*MEDIA"
 #define XDVD_SIGNATURE_SIZE 0x14
+#define WINDOWS_TICK 10000000
+#define SEC_TO_UNIX_EPOCH 11644473600LL
 
-// global file description since main program needs to access it
+// global file descriptor since main program needs to access it
 int xbfs_fd;
+
+static time_t timestamp;
 
 //! Extract \c xbfsfile structure from FUSE context.
 static inline struct xbfsfile *get_xbfsfile_from_context(void)
@@ -169,7 +173,8 @@ static void xbfs_recurse_file_subtree(
 			is_dir ? "directory" : "");
 
 		tree_insert(root, name_copy, strlen(name_copy),
-			filesystem_base_offset + file_sector * SECTOR_SIZE, file_size);
+			filesystem_base_offset + file_sector * SECTOR_SIZE,
+			file_size, timestamp);
 	}
 
 	// process right subtree
@@ -227,7 +232,6 @@ static void *xbfs_init(void)
 	char name_buffer[NAME_MAX_SIZE];
 	unsigned int root_directory_sector;
 	unsigned int root_directory_size;
-	unsigned char timestamp[8];
 	unsigned char sector_buffer[SECTOR_SIZE];
 	off_t filesystem_base_offset = 0;
 
@@ -258,13 +262,26 @@ static void *xbfs_init(void)
 			// process the volume descriptor
 			root_directory_sector = LE_32(&sector_buffer[0x14]);
 			root_directory_size = LE_32(&sector_buffer[0x18]);
-			memcpy(timestamp, &sector_buffer[0x1C], 8);
 
-			fprintf(stderr, "root @ sector 0x%X, 0x%X bytes; time = %02X %02X %02X %02X %02X %02X %02X %02X\n",
-				root_directory_sector, root_directory_size,
-				timestamp[0], timestamp[1], timestamp[2], timestamp[3],
-				timestamp[4], timestamp[5], timestamp[6], timestamp[7]);
-
+			// convert 64-bit Windows FILETIME structure to
+			// Unix epoch timestamp
+			timestamp  = sector_buffer[0x1C+7];
+			timestamp <<= 8;
+			timestamp |= sector_buffer[0x1C+6];
+			timestamp <<= 8;
+			timestamp |= sector_buffer[0x1C+5];
+			timestamp <<= 8;
+			timestamp |= sector_buffer[0x1C+4];
+			timestamp <<= 8;
+			timestamp |= sector_buffer[0x1C+3];
+			timestamp <<= 8;
+			timestamp |= sector_buffer[0x1C+2];
+			timestamp <<= 8;
+			timestamp |= sector_buffer[0x1C+1];
+			timestamp <<= 8;
+			timestamp |= sector_buffer[0x1C+0];
+			timestamp = timestamp / WINDOWS_TICK - SEC_TO_UNIX_EPOCH;
+			fprintf(stderr, "UNIX timestamp: %ld\n", timestamp);
 			break;
 		}
 		filesystem_base_offset += SECTOR_SIZE;
