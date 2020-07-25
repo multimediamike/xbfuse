@@ -24,45 +24,41 @@ research tool for studying Microsoft Xbox/360 discs.
 
 
 ### Requirements:
-```
-	- Linux 2.4.x or 2.6.x (as of 2.6.14 FUSE is part of the
-	  kernel, but you still need user libraries)
-	- FUSE (https://github.com/libfuse/libfuse) 2.5.x or higher
-	- FUSE development libraries; 'libfuse-dev' on Ubuntu distros
-```
+- Linux 2.4.x or 2.6.x (as of 2.6.14 FUSE is part of the kernel, but you still need user libraries)
+- FUSE (https://github.com/libfuse/libfuse) 2.5.x or higher
+- FUSE development libraries; 'libfuse-dev' on Ubuntu distros
 
 ### Build:
-After cloning this git repo:
+After cloning this git repo, perform the standard development steps for building an autotool'd project:
 ```
-	./autogen.sh
-	./configure
-	make
+  ./autogen.sh
+  ./configure
+  make
 ```
 
 ### Install:
-```
-	make install
-```
+``` make install ```
 
 ### Usage:
-```
-	xbfuse <image_file> <mount_point>
+The basic usage is to supply an Xbox/360 DVD image and an empty mount point on the filesystem:
 
-	To unmount previously mounted file, use:
-	fusermount -u <mount_point>
+    xbfuse <image_file> <mount_point>
 
-	To debug, or investigate how xbfuse examines the filesystem:
-	xbfuse <image_file> <mount_point> -d
+To unmount previously mounted file, use:
 
-        To export the absolute file offsets via a file's stat structure's
-        inode field, specify the "-o use_ino" option. For example:
+    fusermount -u <mount_point>
 
-        xbfuse xbox-game.image-file /path/to/mountpoint -o use_ino
-        stat --printf='offset: %i\nsize: %s\n' /path/to/mountpoint/default.xbe
+To debug, or investigate how xbfuse examines the filesystem:
 
-        This 'stat' will print the absolute offset and size of the default.xbe
-        file at the root of the filesystem.
-```
+    xbfuse <image_file> <mount_point> -d
+
+To export the absolute file offsets via a file's stat structure's inode field, specify the "-o use_ino" option. For example:
+
+    xbfuse xbox-game.image-file /path/to/mountpoint -o use_ino
+    stat --printf='offset: %i\nsize: %s\n' /path/to/mountpoint/default.xbe
+
+This 'stat' will print the absolute offset and size of the default.xbe
+file at the root of the filesystem.
 
 ### References:
 This program was made possible through the information found in
