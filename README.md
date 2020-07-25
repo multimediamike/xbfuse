@@ -43,7 +43,7 @@ The basic usage is to supply an Xbox/360 DVD image and an empty mount point on t
 
     xbfuse <image_file> <mount_point>
 
-To unmount previously mounted file, use:
+To unmount a previously mounted filesystem image, use `fusermount`:
 
     fusermount -u <mount_point>
 
@@ -56,7 +56,7 @@ To export the absolute file offsets via a file's stat structure's inode field, s
     xbfuse xbox-game.image-file /path/to/mountpoint -o use_ino
     stat --printf='offset: %i\nsize: %s\n' /path/to/mountpoint/default.xbe
 
-This 'stat' will print the absolute offset and size of the default.xbe
+This `stat` command will print the absolute offset and size of the default.xbe
 file at the root of the filesystem.
 
 ### References:
