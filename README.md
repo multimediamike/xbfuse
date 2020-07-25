@@ -30,14 +30,13 @@ research tool for studying Microsoft Xbox/360 discs.
 
 ### Build:
 After cloning this git repo, perform the standard development steps for building an autotool'd project:
-```
-  ./autogen.sh
-  ./configure
-  make
-```
+
+    ./autogen.sh
+    ./configure
+    make
 
 ### Install:
-``` make install ```
+    make install
 
 ### Usage:
 The basic usage is to supply an Xbox/360 DVD image and an empty mount point on the filesystem:
